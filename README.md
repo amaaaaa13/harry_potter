@@ -25,6 +25,8 @@ BLoC for state management
 
 MVVM architecture
 
+Equatable for efficient state comparison
+
 Dio for API calls
 
 SharedPreferences for local storage
