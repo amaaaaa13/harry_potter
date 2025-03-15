@@ -3,63 +3,43 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../viewmodels/favorite/favorite_bloc.dart';
 import '../../core/constants/constant_string.dart';
 
-class FavoritesScreen extends StatefulWidget {
-  @override
-  _FavoritesScreenState createState() => _FavoritesScreenState();
-}
-
-class _FavoritesScreenState extends State<FavoritesScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-
-    /// 📌 Load favorites when the screen initializes
-    context.read<FavoriteBloc>().add(LoadFavorites());
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class FavoritesScreen extends StatelessWidget {
+  const FavoritesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A2E),
-        elevation: 4,
-        centerTitle: true,
-        title: const Text(
-          'Favorites',
-          style: TextStyle(
-            fontFamily: ConstantString.fontHarryP,
-            fontSize: 32,
-            color: Colors.amber,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF1A1A2E),
+          elevation: 4,
+          centerTitle: true,
+          title: const Text(
+            'Favorites',
+            style: TextStyle(
+              fontFamily: ConstantString.fontHarryP,
+              fontSize: 32,
+              color: Colors.amber,
+            ),
+          ),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Characters'),
+              Tab(text: 'Spells'),
+            ],
           ),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Characters'),
-            Tab(text: 'Spells'),
-          ],
+        body: BlocBuilder<FavoriteBloc, FavoriteState>(
+          builder: (context, state) {
+            return TabBarView(
+              children: [
+                _buildFavoriteList(state.favoriteCharacters, isCharacter: true),
+                _buildFavoriteList(state.favoriteSpells, isCharacter: false),
+              ],
+            );
+          },
         ),
-      ),
-      body: BlocBuilder<FavoriteBloc, FavoriteState>(
-        builder: (context, state) {
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              _buildFavoriteList(state.favoriteCharacters, isCharacter: true),
-              _buildFavoriteList(state.favoriteSpells, isCharacter: false),
-            ],
-          );
-        },
       ),
     );
   }
@@ -119,7 +99,7 @@ class _FavoritesScreenState extends State<FavoritesScreen>
             trailing: IconButton(
               icon: const Icon(
                 Icons.favorite,
-                color: Colors.red, // Red heart for unfavoriting
+                color: Colors.red,
                 size: 30,
               ),
               onPressed: () {

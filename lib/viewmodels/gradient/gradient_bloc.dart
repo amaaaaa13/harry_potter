@@ -1,23 +1,29 @@
 import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'gradient_event.dart';
+import 'gradient_state.dart';
 
-class GradientBloc {
-  final _gradientController = StreamController<
-      List<Color>>.broadcast(); // Broadcast for multiple listeners
-  final List<List<Color>> _gradientColors = [];
+class GradientBloc extends Bloc<GradientEvent, GradientState> {
+  List<List<Color>> _gradientColors = [];
+  int _colorIndex = 0;
+  Timer? _timer;
 
-  GradientBloc(String house) {
-    _setGradientColors(house);
-    _startColorChange();
+  GradientBloc() : super(GradientInitial()) {
+    on<StartGradientAnimation>(_onStartGradientAnimation);
+    on<CycleGradient>(_onCycleGradient);
   }
 
-  // Getter for the gradient colors
-  List<List<Color>> get gradientColors => _gradientColors;
+  void _onStartGradientAnimation(
+      StartGradientAnimation event, Emitter<GradientState> emit) {
+    _setGradientColors(event.house);
+    _startColorChange(emit);
+  }
 
-  // Stream that emits the current gradient
-  Stream<List<Color>> get gradientStream => _gradientController.stream;
+  void _onCycleGradient(CycleGradient event, Emitter<GradientState> emit) {
+    _cycleGradient(emit);
+  }
 
-  // Setting gradients based on house
   void _setGradientColors(String house) {
     final houseGradients = {
       "Gryffindor": [
@@ -42,28 +48,30 @@ class GradientBloc {
       ]
     };
 
-    // Clear old gradients when setting new ones for a house
-    _gradientColors.clear();
-    _gradientColors.addAll(houseGradients[house] ??
+    _gradientColors = houseGradients[house] ??
         [
           [Colors.black87, Colors.grey.shade800],
           [Colors.black54, Colors.grey.shade600],
           [Colors.black45, Colors.grey.shade400],
-        ]);
+        ];
   }
 
-  // Start periodic gradient change every 2.5 seconds
-  void _startColorChange() {
-    int colorIndex = 0;
-    Timer.periodic(Duration(milliseconds: 2500), (timer) {
-      if (_gradientController.isClosed) return;
-      colorIndex = (colorIndex + 1) % _gradientColors.length;
-      _gradientController.add(_gradientColors[colorIndex]);
+  void _startColorChange(Emitter<GradientState> emit) {
+    emit(GradientUpdated(_gradientColors[0]));
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(milliseconds: 2500), (timer) {
+      add(CycleGradient());
     });
   }
 
-  // Dispose resources
-  void dispose() {
-    _gradientController.close(); // Close the StreamController when done
+  void _cycleGradient(Emitter<GradientState> emit) {
+    _colorIndex = (_colorIndex + 1) % _gradientColors.length;
+    emit(GradientUpdated(_gradientColors[_colorIndex]));
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }

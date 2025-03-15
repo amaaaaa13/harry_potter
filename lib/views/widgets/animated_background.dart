@@ -1,54 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:harry_potter/viewmodels/gradient/gradient_bloc.dart';
+import 'package:harry_potter/viewmodels/gradient/gradient_event.dart';
+import 'package:harry_potter/viewmodels/gradient/gradient_state.dart';
 
-class AnimatedBackground extends StatefulWidget {
+class AnimatedBackground extends StatelessWidget {
   final String house;
 
   AnimatedBackground({required this.house});
 
   @override
-  _AnimatedBackgroundState createState() => _AnimatedBackgroundState();
-}
-
-class _AnimatedBackgroundState extends State<AnimatedBackground> {
-  late GradientBloc _gradientBloc;
-  late List<Color> _initialGradient;
-
-  @override
-  void initState() {
-    super.initState();
-    _gradientBloc = GradientBloc(widget.house);
-    _initialGradient = _gradientBloc.gradientColors[0];
-  }
-
-  @override
-  void dispose() {
-    _gradientBloc.dispose(); // Dispose the BLoC
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Color>>(
-      stream: _gradientBloc
-          .gradientStream, // Listen to the BLoC stream for gradient updates
-      builder: (context, snapshot) {
-        // If gradient data is available, use it, otherwise fall back to the initial gradient
-        List<Color> gradientColors =
-            snapshot.hasData ? snapshot.data! : _initialGradient;
+    return BlocProvider(
+      create: (context) => GradientBloc()..add(StartGradientAnimation(house)),
+      child: BlocBuilder<GradientBloc, GradientState>(
+        builder: (context, state) {
+          if (state is GradientUpdated) {
+            return AnimatedContainer(
+              duration: Duration(milliseconds: 1500),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: state.gradientColors,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            );
+          }
 
-        return AnimatedContainer(
-          duration: Duration(milliseconds: 1500), // Smooth animation duration
-          curve: Curves.easeInOut,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: gradientColors,
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        );
-      },
+          // While waiting for the first update, return an empty container
+          return Container();
+        },
+      ),
     );
   }
 }

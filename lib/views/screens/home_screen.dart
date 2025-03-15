@@ -1,48 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:harry_potter/core/constants/constant_string.dart';
+import 'package:harry_potter/viewmodels/home_screen_bloc.dart';
 import 'package:harry_potter/views/screens/main_app_screen.dart';
-import 'package:harry_potter/viewmodels/home_screen_cubit.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeInAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Set up the fade-in animation for cinematic entry
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    );
-
-    _fadeInAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-
-    // Start the animation
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HomeScreenCubit(),
+      create: (_) => HomeScreenBloc()..add(StartFadeInAnimation()),
       child: Scaffold(
         body: Stack(
           fit: StackFit.expand,
@@ -66,11 +32,12 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            // Fade-in animated content using the BLoC value
-            BlocBuilder<HomeScreenCubit, double>(
+            // Fade-in animated content using BLoC
+            BlocBuilder<HomeScreenBloc, double>(
               builder: (context, fadeInValue) {
-                return FadeTransition(
-                  opacity: _fadeInAnimation, // Fade transition for text
+                return AnimatedOpacity(
+                  opacity: fadeInValue,
+                  duration: const Duration(seconds: 2),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -97,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen>
                       // Magical Glowing Entry Button
                       TweenAnimationBuilder<double>(
                         tween: Tween<double>(begin: 0, end: 1),
-                        duration: Duration(seconds: 2),
+                        duration: const Duration(seconds: 2),
                         builder: (context, glow, child) {
                           return Container(
                             decoration: BoxDecoration(
@@ -111,10 +78,9 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                             child: ElevatedButton(
                               onPressed: () {
-                                // Start animation and navigate to the next screen
                                 context
-                                    .read<HomeScreenCubit>()
-                                    .startAnimation();
+                                    .read<HomeScreenBloc>()
+                                    .add(StartAnimation());
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
