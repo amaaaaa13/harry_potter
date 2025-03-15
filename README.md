@@ -1,16 +1,26 @@
-# harry_potter
+## 🧙‍♂️ Harry Potter Flutter App
+A visually immersive Harry Potter app built with Flutter, following the BLoC state management and MVVM architecture. This app fetches data from the Harry Potter API and provides an interactive experience with Hogwarts characters and spells.
 
-A new Flutter project.
+## ✨ Features
+🎬 Cinematic UI – Animated Hogwarts-style UI with magical transitions.
+📜 Character List – View all students and staff from Hogwarts.
+🏠 House Filtering – Filter characters by Hogwarts house.
+🪄 Spells List – Browse and learn about spells used in the wizarding world.
+⭐ Favorites – Save favorite characters and spells.
+🔎 Search – Find characters and spells quickly.
+🌐 API Integration – Fetch real-time data from Harry Potter API.
+🎨 Gradient Background in Character Detail
 
-## Getting Started
+## 🏗 Architecture & Tech Stack
+Flutter (Dart)
+BLoC for state management
+MVVM architecture
+Dio for API calls
+SharedPreferences for local storage
+Animations for UI enhancements
 
-This project is a starting point for a Flutter application.
+## 🎥 Demo
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+https://github.com/user-attachments/assets/c6bbcb4c-64f1-412d-8fff-8d94e4e76ea7
