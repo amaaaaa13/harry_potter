@@ -3,12 +3,19 @@ A visually immersive Harry Potter app built with Flutter, following the BLoC sta
 
 ## ✨ Features
 🎬 Cinematic UI – Animated Hogwarts-style UI with magical transitions.
+
 📜 Character List – View all students and staff from Hogwarts.
+
 🏠 House Filtering – Filter characters by Hogwarts house.
+
 🪄 Spells List – Browse and learn about spells used in the wizarding world.
+
 ⭐ Favorites – Save favorite characters and spells.
-🔎 Search – Find characters and spells quickly.
+
+🔎 Search – Find characters quickly.
+
 🌐 API Integration – Fetch real-time data from Harry Potter API.
+
 🎨 Gradient Background in Character Detail
 
 ## 🏗 Architecture & Tech Stack
