@@ -20,10 +20,15 @@ A visually immersive Harry Potter app built with Flutter, following the BLoC sta
 
 ## 🏗 Architecture & Tech Stack
 Flutter (Dart)
+
 BLoC for state management
+
 MVVM architecture
+
 Dio for API calls
+
 SharedPreferences for local storage
+
 Animations for UI enhancements
 
 ## 🎥 Demo
